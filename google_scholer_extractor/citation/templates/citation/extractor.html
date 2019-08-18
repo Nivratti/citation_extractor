@@ -1,0 +1,102 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Citation Extraction</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'citation/css/bootstrap.min.css' %}">
+  <script src="{% static 'citation/js/jquery.min.js' %}"></script>
+  <script src="{% static 'citation/js/popper.min.js' %}"></script>
+  <script src="{% static 'citation/js/js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>&nbsp;</h2>
+    <h2>Citation Extractor</h2>
+    <p>Enter url to extarct citations</p>
+
+    <div class="form-group">
+        <label for="url">Url:</label>
+        <input 
+          type="text" class="form-control" id="url" name="url"
+          placeholder='example: https://scholar.google.co.in/citations?user=IrlPkbMAAAAJ&hl=en"''>
+    </div>
+
+    <button id="btn-extract-citations" class="btn btn-primary" type="button">
+      <div id="normal-state"><span>Extract Citations </span></div>
+      <div id="loading-state" style="display:none;">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span>Extarcting ...<span>
+      </div>
+    </button>
+
+    <div id="result" class="mt-5 pt-4">
+    </div>
+
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    
+    var btn_extract_citations = $("#btn-extract-citations").get(0);
+
+    $(btn_extract_citations).on("click", function(){
+
+        // reset result box
+        $("#result").html();
+
+        $(this).prop('disabled', true);
+        $(this).find("#normal-state").css("display", "none");
+        $(this).find("#loading-state").css("display", "inline-block");
+
+        var url_citation = $.trim($("#url").val())
+
+        if(url_citation)
+        {
+
+          $.ajax({
+              data: {
+                  "url_citation": url_citation,
+              },
+              method: "POST",
+              // dataType: 'json',
+              url: '/citation/extract_citations/'
+
+          }).done(function(data) {
+              // If successful
+              console.log(data);
+
+              $(btn_extract_citations).prop('disabled', false);
+              $(btn_extract_citations).find("#normal-state").css("display", "inline-block");
+              $(btn_extract_citations).find("#loading-state").css("display", "none");
+
+              ///
+              // create link to downlaod excel sheet
+              var link = $("<a>");
+              link.attr("href", data.generated_excel_file.path);
+              // link.attr("title", "Google.com");
+              link.text("click here .. to downlaod generated excel sheet");
+              link.addClass("link");
+
+              $("#result").html(link);
+
+
+          }).fail(function(jqXHR, textStatus, errorThrown) {
+              // If fail
+              console.log(textStatus + ': ' + errorThrown);
+          });
+        }
+        else
+        {
+          alert("Please Enter proper url ... ")
+        }
+
+    });
+})
+</script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+# ********************************************************
+# Creating an environment from an environment.yml file
+# ********************************************************
+# 1) Create the environment from the environment.yml file.
+#     conda env create -f environment.yml
+#
+# ========================================================
+
+
+# ********************************************************
+# Updating an environment
+# ********************************************************
+# conda env update --file environment.yml
+
+# ********************************************************
+# Removing an environment
+# ********************************************************
+# conda remove --name myenv --all
+
+
+name: env_selenium
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+  - python=3.7.0
+  - selenium
+  - beautifulsoup4
+  - requests
+  - pandas
+  - django=2.2
+  - openpyxl 
+
+  # - pip:
+  #   - Flask-Testing
